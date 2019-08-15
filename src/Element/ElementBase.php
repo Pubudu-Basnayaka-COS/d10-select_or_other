@@ -134,7 +134,7 @@ abstract class ElementBase extends FormElement {
 
         if (isset($element['#merged_values']) && $element['#merged_values']) {
           if (!empty($values['other'])) {
-            $values = array_merge($values['select'], $values['other']);
+            $values = array_values(array_merge($values['select'], $values['other']));
             // Add the other option to the available options to prevent
             // validation errors.
             $element['#options'][$input['other']] = $input['other'];
