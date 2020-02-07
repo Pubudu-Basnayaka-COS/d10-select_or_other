@@ -140,7 +140,7 @@ abstract class ElementBase extends FormElement {
             $element['#options'][$input['other']] = $input['other'];
           }
           else {
-            $values = $values['select'];
+            $values = array_values($values['select']);
           }
         }
 
