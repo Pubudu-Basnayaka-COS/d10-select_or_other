@@ -100,8 +100,8 @@ abstract class ElementBase extends FormElement {
    * Expands the select or other element to have a 'select' and 'other' field.
    */
   public static function processSelectOrOther(&$element, FormStateInterface $form_state, &$complete_form) {
-    self::addSelectField($element);
-    self::addOtherField($element);
+    static::addSelectField($element);
+    static::addOtherField($element);
     return $element;
   }
 
@@ -121,7 +121,7 @@ abstract class ElementBase extends FormElement {
       '#default_value' => $element['#default_value'],
       '#required' => $element['#required'],
       '#multiple' => $element['#multiple'],
-      '#options' => self::addOtherOption($element['#original_options'] ?? $element['#options']),
+      '#options' => static::addOtherOption($element['#original_options'] ?? $element['#options']),
       '#weight' => 10,
     ];
   }

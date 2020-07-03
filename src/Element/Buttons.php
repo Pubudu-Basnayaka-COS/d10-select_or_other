@@ -19,9 +19,9 @@ class Buttons extends ElementBase {
   public static function processSelectOrOther(&$element, FormStateInterface $form_state, &$complete_form) {
     $element = parent::processSelectOrOther($element, $form_state, $complete_form);
 
-    self::setSelectType($element);
-    self::addStatesHandling($element);
-    self::addEmptyOption($element);
+    static::setSelectType($element);
+    static::addStatesHandling($element);
+    static::addEmptyOption($element);
 
     return $element;
   }
@@ -38,7 +38,7 @@ class Buttons extends ElementBase {
     }
     else {
       $element['select']['#type'] = 'radios';
-      self::ensureCorrectDefaultValue($element);
+      static::ensureCorrectDefaultValue($element);
     }
   }
 
@@ -65,10 +65,10 @@ class Buttons extends ElementBase {
    */
   protected static function addStatesHandling(array &$element) {
     if (!$element['#multiple']) {
-      $element['other']['#states'] = self::prepareState('visible', $element['#name'] . '[select]', 'value', 'select_or_other');
+      $element['other']['#states'] = static::prepareState('visible', $element['#name'] . '[select]', 'value', 'select_or_other');
     }
     else {
-      $element['other']['#states'] = self::prepareState('visible', $element['#name'] . '[select][select_or_other]', 'checked', TRUE);
+      $element['other']['#states'] = static::prepareState('visible', $element['#name'] . '[select][select_or_other]', 'checked', TRUE);
     }
   }
 
