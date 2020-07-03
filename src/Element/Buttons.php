@@ -83,6 +83,9 @@ class Buttons extends ElementBase {
       if (!$element['#multiple'] && !$element['#required'] && !empty($element['#default_value'])) {
         $element['select']['#options'] = ['' => t('- None -')] + $element['select']['#options'];
       }
+      else {
+        $element['select']['#value'] = [];
+      }
     }
   }
 

@@ -34,4 +34,56 @@ class ListTest extends TestBase {
     parent::testEmptyOption('My cool new value');
   }
 
+  /**
+   * Test for illegal choice.
+   */
+  public function testIllegalChoice() {
+    foreach ($this->fields as $field_name => $field) {
+      $this->drupalGet('node/add/' . $this->getFieldContentType($field_name));
+      $select_type = $field['select_type'];
+      $multiple = $field['cardinality'] !== 1;
+      $required = $field['required'];
+
+      // Test checkbox/radios behaviour. Checkboxes/radios that are previewed
+      // shouldn't get an error when returning to editing. Checkboxes with
+      // multiple cardinality should be tested with other option checked and
+      // without other option checked. Radios with single cardinality
+      // shouldn't get an error when - none - option is checked and returned
+      // from preview.
+      if ($select_type === 'select_or_other_buttons') {
+        if (!$required) {
+          if ($multiple) {
+            $this->setFieldValue($field_name, 'select_or_other', 'multi_value');
+            $this->clickLink(t('Edit'));
+
+            $this->getSession()->getPage()->findButton('edit-preview')->press();
+            $this->clickLink(t('Back to content editing'));
+            $this->assertSession()->pageTextNotContains('An illegal choice has been detected. Please contact the site administrator.');
+
+            $this->setFieldValue($field_name, 'multi_value');
+            $this->clickLink(t('Edit'));
+
+            $this->getSession()->getPage()->findButton('edit-preview')->press();
+            $this->clickLink(t('Back to content editing'));
+            $this->assertSession()->pageTextNotContains('An illegal choice has been detected. Please contact the site administrator.');
+          }
+          else {
+            $this->setFieldValue($field_name, 'select_or_other', 'value');
+            $this->clickLink(t('Edit'));
+
+            $this->getSession()->getPage()->findButton('edit-preview')->press();
+            $this->clickLink(t('Back to content editing'));
+            $this->assertSession()->pageTextNotContains('An illegal choice has been detected. Please contact the site administrator.');
+
+            $this->setFieldValue($field_name, '');
+
+            $this->clickLink(t('Back to content editing'));
+            $this->assertSession()->pageTextNotContains('An illegal choice has been detected. Please contact the site administrator.');
+          }
+        }
+      }
+
+    }
+  }
+
 }

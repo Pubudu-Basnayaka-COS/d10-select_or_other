@@ -134,13 +134,20 @@ abstract class ElementBase extends FormElement {
 
         if (isset($element['#merged_values']) && $element['#merged_values']) {
           if (!empty($values['other'])) {
-            $values = array_values(array_merge($values['select'], $values['other']));
+            if (is_array($values['select']) && array_key_exists('select_or_other', $values['select'])) {
+              $select = array_pop($values['select']) !== NULL ? array_pop($values['select']) : [];
+              $values = array_values(array_merge($select, $values['other']));
+            }
+            else {
+              $values = array_values(array_merge($values['select'], $values['other']));
+            }
             // Add the other option to the available options to prevent
             // validation errors.
             $element['#options'][$input['other']] = $input['other'];
           }
           else {
-            $values = array_values($values['select']);
+            $select = array_filter($values['select']);
+            $values = array_values($select);
           }
         }
 

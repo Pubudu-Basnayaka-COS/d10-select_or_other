@@ -58,6 +58,7 @@ namespace Drupal\Tests\select_or_other\Unit {
       $expected_element = array_merge_recursive($base_expected_element, [
         'select' => [
           '#type' => 'checkboxes',
+          '#value' => [],
         ],
         'other' => [
           '#states' => [
@@ -75,7 +76,10 @@ namespace Drupal\Tests\select_or_other\Unit {
       // Test multiple cardinality Buttons.
       $element = $original_element;
       $expected_element = array_merge_recursive($base_expected_element, [
-        'select' => ['#type' => 'radios'],
+        'select' => [
+          '#type' => 'radios',
+          '#value' => [],
+        ],
         'other' => [
           '#states' => [
             'visible' => [
@@ -131,6 +135,7 @@ namespace Drupal\Tests\select_or_other\Unit {
         '#required' => TRUE,
         'select' => [
           '#options' => [],
+          '#value' => [],
         ],
       ];
       $arguments = [ & $element];
