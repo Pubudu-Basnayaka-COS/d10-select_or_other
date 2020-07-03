@@ -54,6 +54,28 @@ abstract class ElementBase extends FormElement {
   }
 
   /**
+   * @param array $element
+   *   The element to check for enabled state.
+   *
+   * @return bool
+   *   Whether or not the element is disabled.
+   */
+  private static function elementIsDisabled($element) {
+    return isset($element['#disabled']) && $element['#disabled'];
+  }
+
+  /**
+   * @param array $element
+   *   The element to check for access.
+   *
+   * @return bool
+   *   Whether or not the element may be accessed.
+   */
+  private static function noElementAccess($element) {
+    return isset($element['#access']) && !$element['#access'];
+  }
+
+  /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
@@ -125,6 +147,11 @@ abstract class ElementBase extends FormElement {
    * {@inheritdoc}
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    if (self::elementIsDisabled($element) || self::noElementAccess($element)) {
+      unset($element['#value']);
+      return NULL;
+    }
+
     $values = [];
     if ($input !== FALSE && !empty($input['select'])) {
 
