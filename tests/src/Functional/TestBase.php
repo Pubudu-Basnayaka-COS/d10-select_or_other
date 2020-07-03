@@ -158,7 +158,9 @@ abstract class TestBase extends BrowserTestBase {
             ->create($instance_info);
           $instance->save();
 
-          entity_get_form_display('node', $bundle, 'default')
+          \Drupal::entityTypeManager()
+            ->getStorage('entity_form_display')
+            ->load('node' . '.' . $bundle . '.' . 'default')
             ->setComponent($field_name, [
               'type' => $widget,
               'settings' => [
