@@ -6,7 +6,7 @@
 (function ($) {
   'use strict';
   function select_or_other_check_and_show($select, speed) {
-    var $other = $select.parents('.form-item').next();
+    var $other = $select.parents('.form-item.js-form-type-textfield').next();
     if ($select.find("option:selected[value=select_or_other]").length) {
       $other.show(speed, function () {
         if ($(this).hasClass('select-or-other-initialized')) {
