@@ -136,6 +136,9 @@ abstract class ElementBase extends FormElement {
     $element['other'] = [
       '#type' => 'textfield',
       '#weight' => 20,
+      '#attributes' => [
+        'placeholder' => t('Other: please specify here'),
+      ],
     ];
 
     if (isset($element['#other_options'])) {

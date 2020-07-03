@@ -124,6 +124,9 @@ namespace Drupal\Tests\select_or_other\Unit {
           'other' => [
             '#type' => 'textfield',
             '#weight' => 20,
+            '#attributes' => [
+              'placeholder' => "Other: please specify here",
+            ],
           ]
         ];
 
