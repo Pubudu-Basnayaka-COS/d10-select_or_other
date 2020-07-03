@@ -45,10 +45,16 @@ namespace Drupal\Tests\select_or_other\Unit {
             '#required' => $element['#required'],
             '#multiple' => $element['#multiple'],
             '#options' => $method->invoke(NULL, $element['#options']),
+            '#attributes' => [
+              'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
+            ],
             '#weight' => 10,
           ],
           'other' => [
             '#type' => 'textfield',
+            '#attributes' => [
+              'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
+            ],
             '#weight' => 20,
             '#attributes' => [
               'placeholder' => "Other: please specify here",

@@ -122,6 +122,9 @@ abstract class ElementBase extends FormElement {
       '#required' => $element['#required'],
       '#multiple' => $element['#multiple'],
       '#options' => static::addOtherOption($element['#original_options'] ?? $element['#options']),
+      '#attributes' => [
+        'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
+      ],
       '#weight' => 10,
     ];
   }
@@ -135,6 +138,9 @@ abstract class ElementBase extends FormElement {
   protected static function addOtherField(array &$element) {
     $element['other'] = [
       '#type' => 'textfield',
+      '#attributes' => [
+        'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
+      ],
       '#weight' => 20,
       '#attributes' => [
         'placeholder' => t('Other: please specify here'),
