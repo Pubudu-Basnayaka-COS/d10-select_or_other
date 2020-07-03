@@ -25,6 +25,28 @@ class ListWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  public static function defaultSettings() {
+    return [
+      'add_other_value_to_allowed_values' => TRUE,
+    ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $form = parent::settingsForm($form, $form_state);
+    $form['add_other_value_to_allowed_values'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Add entered values from the other field to the allowed values list.'),
+      '#default_value' => $this->getSetting('add_other_value_to_allowed_values'),
+    ];
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getOptions(FieldableEntityInterface $entity = NULL) {
     $options = [];
 
@@ -44,6 +66,23 @@ class ListWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
+    if (!$this->getSetting('add_other_value_to_allowed_values')) {
+      // Add original options to the element.
+      $element['#original_options'] = $element['#options'];
+
+      // Add selected "Other" values to the element.
+      $element['#other_options'] = [];
+      $values = $items->getValue();
+      if (!empty($values)) {
+        foreach ($values as $value) {
+          // Set value only if value exists and is not a default option.
+          if (isset($value['value']) && !isset($element['#options'][$value['value']])) {
+            $element['#other_options'][] = $value['value'];
+          }
+        }
+      }
+    }
+
     $element = $element + [
         '#merged_values' => TRUE,
       ];
@@ -55,10 +94,12 @@ class ListWidget extends WidgetBase {
     unset($values['select']);
     unset($values['other']);
 
-    $new_values = $this->extractNewValues($values);
+    if ($this->getSetting('add_other_value_to_allowed_values')) {
+      $new_values = $this->extractNewValues($values);
 
-    if (!empty($new_values)) {
-      $this->addNewValuesToAllowedValues($new_values);
+      if (!empty($new_values)) {
+        $this->addNewValuesToAllowedValues($new_values);
+      }
     }
 
     return parent::massageFormValues($values, $form, $form_state);

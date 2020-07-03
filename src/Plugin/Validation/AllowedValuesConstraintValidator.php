@@ -67,6 +67,10 @@ class AllowedValuesConstraintValidator extends ChoiceValidator implements Contai
       }
 
       if (isset($value)) {
+        if (!in_array($value, $constraint->choices)) {
+          $constraint->choices[] = $value;
+        }
+
         parent::validate($value, $constraint);
       }
     }

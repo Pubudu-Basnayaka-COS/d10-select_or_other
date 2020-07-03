@@ -75,6 +75,8 @@ class ListWidgetTest extends UnitTestBase {
 
     $expected = [
       '#merged_values' => TRUE,
+      '#original_options' => [],
+      '#other_options' => [],
     ];
 
     $this->assertArrayEquals($expected, $added);
@@ -138,13 +140,47 @@ class ListWidgetTest extends UnitTestBase {
     $field_storage_config = $this->getMockForAbstractClass('\Drupal\field\FieldStorageConfigInterface');
     $field_storage_config->expects($this->once())->method('setSetting')->willReturnSelf();
     $field_storage_config->expects($this->once())->method('save');
+
     $entity_storage_methods = ['load' => $field_storage_config,];
+
     $entity_type_manager_methods = ['getStorage' => $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityStorageInterface', $entity_storage_methods),];
     $entity_type_manager_mock = $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityTypeManagerInterface', $entity_type_manager_methods);
     $this->registerServiceWithContainerMock('entity_type.manager', $entity_type_manager_mock);
 
     $form = [];
     $form_state = new FormState();
+
+    // First invocation does not call setSetting or save.
+    $sut->massageFormValues(['t'], $form, $form_state);
+    // Second invocation calls setSetting and save.
+    $sut->massageFormValues(['t', 'est'], $form, $form_state);
+  }
+
+  /**
+   * @test
+   * @covers Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget::extractNewValues
+   * @covers Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget::AddNewValuesToAllowedValues
+   */
+  public function massageFormValuesDoNotAddOtherValuesToAllowedValues() {
+    $allowed_values = ['t' => 'test'];
+    $field_definition = $this->getMockForAbstractClass('\Drupal\Core\Field\FieldDefinitionInterface');
+    $field_definition->method('getSetting')->willReturn($allowed_values);
+    $sut = $this->getNewSubjectUnderTest($field_definition);
+
+    $field_storage_config = $this->getMockForAbstractClass('\Drupal\field\FieldStorageConfigInterface');
+    $field_storage_config->expects($this->never())->method('setSetting')->willReturnSelf();
+    $field_storage_config->expects($this->never())->method('save');
+
+    $entity_storage_methods = ['load' => $field_storage_config,];
+
+    $entity_type_manager_methods = ['getStorage' => $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityStorageInterface', $entity_storage_methods),];
+    $entity_type_manager_mock = $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityTypeManagerInterface', $entity_type_manager_methods);
+    $this->registerServiceWithContainerMock('entity_type.manager', $entity_type_manager_mock);
+
+    $form = [];
+    $form_state = new FormState();
+
+    $sut->setSetting('add_other_value_to_allowed_values', FALSE);
 
     // First invocation does not call setSetting or save.
     $sut->massageFormValues(['t'], $form, $form_state);

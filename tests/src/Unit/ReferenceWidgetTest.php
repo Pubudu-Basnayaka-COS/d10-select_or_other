@@ -79,7 +79,7 @@ class ReferenceWidgetTest extends UnitTestBase {
   public function testGetOptions() {
     $entity_id = 1;
     $entity_label = 'Label';
-    $entity_mock = $this->getMockBuilder('\Drupal\Core\Entity\Entity')
+    $entity_mock = $this->getMockBuilder('\Drupal\Core\Entity\EntityBase')
       ->disableOriginalConstructor()
       ->getMock();
     $entity_mock->expects($this->exactly(1))
@@ -237,7 +237,7 @@ class ReferenceWidgetTest extends UnitTestBase {
   public function testPrepareSelectedOptions() {
     $entity_id = 1;
     $entity_label = 'Label';
-    $entity_mock = $this->getMockBuilder('\Drupal\Core\Entity\Entity')
+    $entity_mock = $this->getMockBuilder('\Drupal\Core\Entity\EntityBase')
       ->disableOriginalConstructor()
       ->getMock();
     $entity_mock->expects($this->any())

@@ -90,11 +90,16 @@ abstract class ElementBase extends FormElement {
    *   The select or other element.
    */
   protected static function addSelectField(array &$element) {
+    if (!empty($element['#other_options'])) {
+      // Add "Other" to default values if "Other" was selected.
+      $element['#default_value'][] = "select_or_other";
+    }
+
     $element['select'] = [
       '#default_value' => $element['#default_value'],
       '#required' => $element['#required'],
       '#multiple' => $element['#multiple'],
-      '#options' => self::addOtherOption($element['#options']),
+      '#options' => self::addOtherOption($element['#original_options'] ?? $element['#options']),
       '#weight' => 10,
     ];
   }
@@ -110,6 +115,10 @@ abstract class ElementBase extends FormElement {
       '#type' => 'textfield',
       '#weight' => 20,
     ];
+
+    if (isset($element['#other_options'])) {
+      $element['other']['#default_value'] = $element['#other_options'];
+    }
   }
 
   /**
