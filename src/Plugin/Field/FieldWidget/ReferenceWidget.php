@@ -4,14 +4,13 @@ namespace Drupal\select_or_other\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\Tags;
 use Drupal\Core\Entity\Element\EntityAutocomplete;
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\EntityOwnerInterface;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -33,7 +32,7 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -54,7 +53,7 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
   /**
    * Constructs a ReferenceWidget object.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManager $entity_type =  NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type =  NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityTypeManager = $entity_type;
     $this->bundleInfoService = $bundle_info_service;
