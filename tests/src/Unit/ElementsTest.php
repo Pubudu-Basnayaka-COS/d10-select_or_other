@@ -27,7 +27,7 @@ namespace Drupal\Tests\select_or_other\Unit {
       $method->setAccessible(TRUE);
       $options = $method->invoke(NULL, $options);
 
-      $this->assertArrayEquals(['select_or_other' => "Other"], $options);
+      $this->assertArrayEquals(['select_or_other' => t("Other")], $options);
     }
 
     /**
@@ -109,32 +109,32 @@ namespace Drupal\Tests\select_or_other\Unit {
         '#multiple' => FALSE,
         '#options' => [
           'first_option' => 'First option',
-          'second_option' => "Second option"
+          'second_option' => "Second option",
         ],
       ];
 
       $expected_element = $element + [
-          'select' => [
-            '#default_value' => $element['#default_value'],
-            '#required' => $element['#required'],
-            '#multiple' => $element['#multiple'],
-            '#options' => $method->invoke(NULL, $element['#options']),
-            '#attributes' => [
-              'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
-            ],
-            '#weight' => 10,
+        'select' => [
+          '#default_value' => $element['#default_value'],
+          '#required' => $element['#required'],
+          '#multiple' => $element['#multiple'],
+          '#options' => $method->invoke(NULL, $element['#options']),
+          '#attributes' => [
+            'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
           ],
-          'other' => [
-            '#type' => 'textfield',
-            '#attributes' => [
-              'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-            ],
-            '#weight' => 20,
-            '#attributes' => [
-              'placeholder' => "Other: please specify here",
-            ],
-          ]
-        ];
+          '#weight' => 10,
+        ],
+        'other' => [
+          '#type' => 'textfield',
+          '#attributes' => [
+            'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
+          ],
+          '#weight' => 20,
+          '#attributes' => [
+            'placeholder' => "Other: please specify here",
+          ],
+        ],
+      ];
 
       $resulting_element = ElementBase::processSelectOrOther($element, $form_state, $form);
       $this->assertArrayEquals($expected_element, $resulting_element);
@@ -151,7 +151,7 @@ namespace Drupal\Tests\select_or_other\Unit {
       $method = new ReflectionMethod('Drupal\select_or_other\Element\ElementBase', 'prepareState');
       $method->setAccessible(TRUE);
 
-      $result = $method->invoke(null, 'state', 'name', 'key', 'value');
+      $result = $method->invoke(NULL, 'state', 'name', 'key', 'value');
       $expected = [
         'state' => [
           ':input[name="name"]' => ['key' => 'value'],
@@ -166,8 +166,13 @@ namespace Drupal\Tests\select_or_other\Unit {
 
 namespace {
   if (!function_exists('t')) {
+
+    /**
+     * this is the same as StringTranslationTrait
+     */
     function t($string, array $args = []) {
       return strtr($string, $args);
     }
+
   }
 }
