@@ -24,8 +24,11 @@ abstract class ElementBase extends FormElement {
   /**
    * Adds an 'other' option to the selectbox.
    */
-  protected static function addOtherOption($options) {
-    $options['select_or_other'] = t('Other');
+  protected static function addOtherOption($options, $other_option = '') {
+    if (empty($other_option)) {
+      $other_option = t('Other');
+    }
+    $options['select_or_other'] = $other_option;
 
     return $options;
   }
@@ -121,7 +124,7 @@ abstract class ElementBase extends FormElement {
       '#default_value' => $element['#default_value'],
       '#required' => $element['#required'],
       '#multiple' => $element['#multiple'],
-      '#options' => static::addOtherOption($element['#original_options'] ?? $element['#options']),
+      '#options' => static::addOtherOption($element['#original_options'] ?? $element['#options'], $element['#other_option']),
       '#attributes' => [
         'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
       ],
@@ -147,8 +150,17 @@ abstract class ElementBase extends FormElement {
       ],
     ];
 
+    if (isset($element['#other_field_label']) && !empty($element['#other_field_label'])) {
+      $element['other']['#title'] = $element['#other_field_label'];
+      $element['other']['#attributes']['aria-label'] = $element['#other_field_label'];
+    }
+
     if (isset($element['#other_options'])) {
       $element['other']['#default_value'] = $element['#other_options'];
+    }
+
+    if (isset($element['#other_placeholder'])) {
+      $element['other']['#attributes']['placeholder'] = $element['#other_placeholder'];
     }
   }
 

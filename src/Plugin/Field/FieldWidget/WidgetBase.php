@@ -66,6 +66,9 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
     return [
       'select_element_type' => 'select_or_other_select',
       'sort_options' => '',
+      'other_placeholder' => '',
+      'other_option' => '',
+      'other_field_label' => '',
     ] + parent::defaultSettings();
   }
 
@@ -89,6 +92,27 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
       '#default_value' => $this->getSetting('sort_options'),
     ];
 
+    $form['other_placeholder'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Other placeholder'),
+      '#default_value' => $this->getSetting('other_placeholder'),
+      '#description' => $this->t('Text that will be shown inside the field until a value is entered. This hint is usually a sample value or a brief description of the expected format.'),
+    ];
+
+    $form['other_option'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Other option'),
+      '#description' => $this->t('Label of the option that the user will choose when they want to supply an other value.'),
+      '#default_value' => $this->getSetting('other_option'),
+    ];
+
+    $form['other_field_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Label of the Other field'),
+      '#description' => $this->t('Label for the field in which the user will supply an other value.'),
+      '#default_value' => $this->getSetting('other_field_label'),
+    ];
+
     return $form;
   }
 
@@ -101,9 +125,25 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
     $options = $this->selectElementTypeOptions();
     $summary[] = $this->t('Type of select form element') . ': ' . $options[$this->getSetting('select_element_type')];
 
+    $placeholder = $this->getSetting('other_placeholder');
+    if (!empty($placeholder)) {
+      $summary[] = $this->t('Placeholder: @placeholder', ['@placeholder' => $placeholder]);
+    }
+    else {
+      $summary[] = $this->t('No placeholder');
+    }
+
     if ($option = $this->getSetting('sort_options')) {
       $options = $this->getAvailableSortOptions();
       $summary[] = $options[$option];
+    }
+
+    if ($other_option = $this->getSetting('other_option')) {
+      $summary[] = $this->t('Other option: @option', ['@option' => $other_option]);
+    }
+
+    if ($other_field_label = $this->getSetting('other_field_label')) {
+      $summary[] = $this->t('Label of the Other field: @label', ['@label' => $other_field_label]);
     }
 
     return $summary;
@@ -119,6 +159,9 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
       '#default_value' => $this->getSelectedOptions($items),
       '#multiple' => $this->isMultiple(),
       '#key_column' => $this->getColumn(),
+      '#other_placeholder' => $this->getSetting('other_placeholder'),
+      '#other_option' => $this->getSetting('other_option'),
+      '#other_field_label' => $this->getSetting('other_field_label'),
     ];
 
     $element['#options'] = $this->getOptions($items->getEntity());

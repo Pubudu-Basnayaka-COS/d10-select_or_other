@@ -35,7 +35,11 @@ namespace Drupal\Tests\select_or_other\Unit {
         '#multiple' => FALSE,
         '#options' => [
           'first_option' => 'First option',
-          'second_option' => "Second option"
+          'second_option' => "Second option",
+        ],
+        '#other_option' => [
+          'first_other_option' => 'First other option',
+          'second_other_option' => "Second other option",
         ],
       ];
 
@@ -44,7 +48,7 @@ namespace Drupal\Tests\select_or_other\Unit {
             '#default_value' => $element['#default_value'],
             '#required' => $element['#required'],
             '#multiple' => $element['#multiple'],
-            '#options' => $method->invoke(NULL, $element['#options']),
+            '#options' => $method->invoke(NULL, $element['#options'], $element['#other_option']),
             '#attributes' => [
               'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
             ],
