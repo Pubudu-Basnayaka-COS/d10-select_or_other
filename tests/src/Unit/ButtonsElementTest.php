@@ -44,27 +44,27 @@ namespace Drupal\Tests\select_or_other\Unit {
       ];
 
       $base_expected_element = $expected_element = $element + [
-          'select' => [
-            '#default_value' => $element['#default_value'],
-            '#required' => $element['#required'],
-            '#multiple' => $element['#multiple'],
-            '#options' => $method->invoke(NULL, $element['#options'], $element['#other_option']),
-            '#attributes' => [
-              'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
-            ],
-            '#weight' => 10,
+        'select' => [
+          '#default_value' => $element['#default_value'],
+          '#required' => $element['#required'],
+          '#multiple' => $element['#multiple'],
+          '#options' => $method->invoke(NULL, $element['#options'], $element['#other_option']),
+          '#attributes' => [
+            'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
           ],
-          'other' => [
-            '#type' => 'textfield',
-            '#attributes' => [
-              'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-            ],
-            '#weight' => 20,
-            '#attributes' => [
-              'placeholder' => "Other: please specify here",
-            ],
-          ]
-        ];
+          '#weight' => 10,
+        ],
+        'other' => [
+          '#type' => 'textfield',
+          '#attributes' => [
+            'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
+          ],
+          '#weight' => 20,
+          '#attributes' => [
+            'placeholder' => "Other: please specify here",
+          ],
+        ],
+      ];
 
       // Test single cardinality Buttons.
       $element = $original_element;
@@ -112,10 +112,10 @@ namespace Drupal\Tests\select_or_other\Unit {
     public function testEnsureCorrectDefaultValue() {
       $element = [
         'select' => [
-          '#type' => 'radios'
-        ]
+          '#type' => 'radios',
+        ],
       ];
-      $arguments = [ & $element];
+      $arguments = [& $element];
       $ensure_correct_default_value = new ReflectionMethod('Drupal\select_or_other\Element\Buttons', 'ensureCorrectDefaultValue');
       $ensure_correct_default_value->setAccessible(TRUE);
 
@@ -151,7 +151,7 @@ namespace Drupal\Tests\select_or_other\Unit {
           '#value' => [],
         ],
       ];
-      $arguments = [ & $element];
+      $arguments = [& $element];
       $add_empty_option = new ReflectionMethod('Drupal\select_or_other\Element\Buttons', 'addEmptyOption');
       $add_empty_option->setAccessible(TRUE);
 
@@ -200,8 +200,23 @@ namespace Drupal\Tests\select_or_other\Unit {
 
 namespace {
   if (!function_exists('t')) {
+
+    /**
+     * Mock implementation of t().
+     *
+     * @param string $string
+     *   The string to translate.
+     * @param array $args
+     *   The arguments.
+     *
+     * @return string
+     *   The translated string.
+     *
+     * @see \t()
+     */
     function t($string, array $args = []) {
       return strtr($string, $args);
     }
+
   }
 }

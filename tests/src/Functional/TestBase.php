@@ -9,15 +9,17 @@ use Drupal\Tests\BrowserTestBase;
  */
 abstract class TestBase extends BrowserTestBase {
 
-  /*
-   * @var array $defaultPermissions
+  /**
+   * The default permissions.
+   *
+   * @var array
    */
   protected $defaultPermissions;
 
   /**
    * Information about the fields used in testing.
    *
-   * @var array $fields
+   * @var array
    *   associated array keyed by field_name with the following information:
    *   - Widget (machine name of the widget used)
    *   - Cardinality (1, -1)
@@ -26,9 +28,10 @@ abstract class TestBase extends BrowserTestBase {
    */
   protected $fields;
 
-  /*
-   * @var array $modules
+  /**
+   * {@inheritdoc}
    */
+
   public static $modules = ['block', 'select_or_other', 'taxonomy', 'node'];
 
   /**
@@ -101,8 +104,8 @@ abstract class TestBase extends BrowserTestBase {
   protected function prepareTestFields($field_type, array $field_settings, $widget, array $select_types) {
     // Configure fields.
     foreach ($select_types as $select_type) {
-      foreach (array(1, -1) as $cardinality) {
-        foreach (array(TRUE, FALSE) as $required) {
+      foreach ([1, -1] as $cardinality) {
+        foreach ([TRUE, FALSE] as $required) {
           $bundle = $this->drupalCreateContentType()->id();
           $field_name = strtolower($this->randomMachineName());
           $vocabulary = $this->randomMachineName();
@@ -130,10 +133,10 @@ abstract class TestBase extends BrowserTestBase {
             'bundle' => $bundle,
           ];
           $field_info = $field_defaults + [
-              'type' => $field_type,
-              'settings' => $field_settings,
-              'cardinality' => $cardinality,
-            ];
+            'type' => $field_type,
+            'settings' => $field_settings,
+            'cardinality' => $cardinality,
+          ];
           \Drupal::entityTypeManager()
             ->getStorage('field_storage_config')
             ->create($field_info)
@@ -141,18 +144,18 @@ abstract class TestBase extends BrowserTestBase {
 
           // Create the instance.
           $instance_info = $field_defaults + [
-              'field_type' => $field_type,
-              'required' => $required,
-              'label' => $field_name,
-              'settings' => [
-                'handler_settings' => [
-                  'target_bundles' => [
-                    $vocabulary => $vocabulary,
-                  ],
-                  'auto_create' => TRUE,
+            'field_type' => $field_type,
+            'required' => $required,
+            'label' => $field_name,
+            'settings' => [
+              'handler_settings' => [
+                'target_bundles' => [
+                  $vocabulary => $vocabulary,
                 ],
+                'auto_create' => TRUE,
               ],
-            ];
+            ],
+          ];
           $instance = \Drupal::entityTypeManager()
             ->getStorage('field_config')
             ->create($instance_info);
@@ -160,7 +163,7 @@ abstract class TestBase extends BrowserTestBase {
 
           \Drupal::entityTypeManager()
             ->getStorage('entity_form_display')
-            ->load('node' . '.' . $bundle . '.' . 'default')
+            ->load('node.' . $bundle . '.default')
             ->setComponent($field_name, [
               'type' => $widget,
               'settings' => [
@@ -187,7 +190,7 @@ abstract class TestBase extends BrowserTestBase {
    *   Value to set for the other element.
    */
   protected function setFieldValue($field_name, $select, $other = '') {
-    $edit = array();
+    $edit = [];
 
     if ($select !== '') {
       // A node requires a title.

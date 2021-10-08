@@ -2,11 +2,8 @@
 
 namespace Drupal\Tests\select_or_other\Unit;
 
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\select_or_other\Plugin\Field\FieldWidget\ReferenceWidget;
-use Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase;
-use ReflectionMethod;
 
 /**
  * Tests the form element implementation.
@@ -33,7 +30,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       'getOptions',
       'getSelectedOptions',
       'getFieldSetting',
-      'getAutoCreateBundle'
+      'getAutoCreateBundle',
     ];
 
     // Get the mockBuilder.
@@ -98,7 +95,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->setMethods([
         'getEntityStorage',
         'getBundleKey',
-        'getSelectionHandlerSetting'
+        'getSelectionHandlerSetting',
       ])
       ->getMock();
     $mock->expects($this->exactly(2))
@@ -111,7 +108,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->method('getSelectionHandlerSetting')
       ->willReturn('target_bundle');
 
-    $get_options = new ReflectionMethod($mock, 'getOptions');
+    $get_options = new \ReflectionMethod($mock, 'getOptions');
     $get_options->setAccessible(TRUE);
 
     // First invocation returns an empty array because there are no entities.
@@ -130,15 +127,15 @@ class ReferenceWidgetTest extends UnitTestBase {
    */
   public function testFormElement() {
     foreach (['node', 'taxonomy_term'] as $target_type) {
-      /** @var ReferenceWidget $mock */
+      /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\ReferenceWidget $mock */
       $mock = $this->prepareFormElementMock($target_type);
-      /** @var WidgetBase $parent */
+      /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase $parent */
       $parent = $this->prepareFormElementMock($target_type, 'Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase');
 
       $entity = $this->getMockForAbstractClass('Drupal\Core\Entity\FieldableEntityInterface');
       $items = $this->getMockForAbstractClass('Drupal\Core\Field\FieldItemListInterface');
       $items->method('getEntity')->willReturn($entity);
-      /** @var FieldItemListInterface $items */
+      /** @var \Drupal\Core\Field\FieldItemListInterface $items */
       $delta = 1;
       $element = [];
       $form = [];
@@ -162,8 +159,8 @@ class ReferenceWidgetTest extends UnitTestBase {
         '#element_validate' => [
           [
             get_class($mock),
-            'validateReferenceWidget'
-          ]
+            'validateReferenceWidget',
+          ],
         ],
       ];
 
@@ -175,7 +172,7 @@ class ReferenceWidgetTest extends UnitTestBase {
    * Tests preparation for EntityAutocomplete::validateEntityAutocomplete.
    */
   public function testPrepareElementValuesForValidation() {
-    $method = new ReflectionMethod($this->getTestedClassName(), 'prepareElementValuesForValidation');
+    $method = new \ReflectionMethod($this->getTestedClassName(), 'prepareElementValuesForValidation');
     $method->setAccessible(TRUE);
 
     foreach ([FALSE, TRUE] as $tags) {
@@ -186,7 +183,7 @@ class ReferenceWidgetTest extends UnitTestBase {
           'Another value',
         ],
       ];
-      $method->invokeArgs(NULL, [ & $element]);
+      $method->invokeArgs(NULL, [& $element]);
 
       if ($tags) {
         $this->assertTrue(is_string($element['#value']));
@@ -212,7 +209,7 @@ class ReferenceWidgetTest extends UnitTestBase {
         $this->getMockForAbstractClass('Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface'),
         $this->getMockForAbstractClass('Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface')
       );
-    $this->registerServiceWithContainerMock('plugin.manager.entity_reference_selection',$entity_reference_selection);
+    $this->registerServiceWithContainerMock('plugin.manager.entity_reference_selection', $entity_reference_selection);
 
     $definition = $this->getMockBuilder('Drupal\Core\Field\FieldDefinitionInterface')
       ->getMockForAbstractClass();
@@ -259,7 +256,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->method('getEntityStorage')
       ->willReturn($entity_storage_mock);
 
-    $get_options = new ReflectionMethod($mock, 'prepareSelectedOptions');
+    $get_options = new \ReflectionMethod($mock, 'prepareSelectedOptions');
     $get_options->setAccessible(TRUE);
 
     // First invocation returns an empty array because there are no entities.

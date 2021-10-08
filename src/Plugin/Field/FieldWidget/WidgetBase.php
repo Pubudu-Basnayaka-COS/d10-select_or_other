@@ -5,6 +5,7 @@ namespace Drupal\select_or_other\Plugin\Field\FieldWidget;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\WidgetBase as CoreWidgetBase;
 
 /**
  * Base class for the 'select_or_other_*' widgets.
@@ -16,7 +17,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @see \Drupal\Core\TypedData\AllowedValuesInterface
  */
-abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
+abstract class WidgetBase extends CoreWidgetBase {
 
   /**
    * Helper method to determine the identifying column for the field.
@@ -123,7 +124,7 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
     $summary = parent::settingsSummary();
 
     $options = $this->selectElementTypeOptions();
-    $summary[] = $this->t('Type of select form element') . ': ' . $options[$this->getSetting('select_element_type')];
+    $summary[] = $this->t('Type of select form element:') . $options[$this->getSetting('select_element_type')];
 
     $placeholder = $this->getSetting('other_placeholder');
     if (!empty($placeholder)) {
@@ -174,10 +175,13 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
   /**
    * Adds the available options to the select or other element.
    *
-   * @param $options
+   * @param array $options
    *   The options to sort.
+   *
+   * @return array
+   *   The sorted options.
    */
-  private function sortOptions($options) {
+  private function sortOptions(array $options) {
     if ($direction = $this->getSetting('sort_options')) {
       if ($direction === 'ASC') {
         uasort($options, 'strcasecmp');
@@ -197,8 +201,8 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The entity this widget is used for.
    *
-   * @return array The array of available options for the widget.
-   * The array of available options for the widget.
+   * @return array
+   *   The array of available options for the widget.
    */
   abstract protected function getOptions(FieldableEntityInterface $entity = NULL);
 
@@ -248,7 +252,7 @@ abstract class WidgetBase extends \Drupal\Core\Field\WidgetBase {
    *   The flattened array.
    */
   protected function flattenOptions(array $array) {
-    $result = array();
+    $result = [];
     array_walk_recursive($array, function ($a, $b) use (&$result) {
       $result[$b] = $a;
     });

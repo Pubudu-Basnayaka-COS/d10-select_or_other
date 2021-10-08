@@ -8,18 +8,37 @@ namespace Drupal\Tests\select_or_other\Unit {
   use ReflectionProperty;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
+  /**
+   * Base class for unit tests.
+   */
   abstract class UnitTestBase extends UnitTestCase {
 
-    /* @var PHPUnit_Framework_MockObject_MockBuilder $stub */
+    /**
+     * The mock builder.
+     *
+     * @var \PHPUnit\Framework\MockObject\MockBuilder
+     */
+
     protected $mockBuilder;
 
-    /* @var PHPUnit_Framework_MockObject_MockObject $containerMock */
+    /**
+     * The container mock.
+     *
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+
     private $containerMock;
 
-    /** @var array $services */
+    /**
+     * The services.
+     *
+     * @var array
+     */
     private $services;
 
     /**
+     * Retrieves the tested class name.
+     *
      * @return string
      *   The fully qualified class name of the subject under test.
      */
@@ -50,7 +69,7 @@ namespace Drupal\Tests\select_or_other\Unit {
 
       $this->containerMock->method('get')->willReturnCallback([
         $this,
-        'containerMockGetServiceCallback'
+        'containerMockGetServiceCallback',
       ]);
     }
 
@@ -74,6 +93,12 @@ namespace Drupal\Tests\select_or_other\Unit {
       return $user_mock;
     }
 
+    /**
+     * Creates a new entity type manager mock.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     *   The new Entity Type Manager Mock.
+     */
     private function getNewEntityTypeManagerMock() {
       $field_storage_config = $this->getMockForAbstractClass('\Drupal\field\FieldStorageConfigInterface');
       $field_storage_config->method('setSetting')->willReturnSelf();
@@ -126,8 +151,12 @@ namespace Drupal\Tests\select_or_other\Unit {
      * Creates a mock for an abstract class with some mapped methods.
      *
      * @param string $abstractClassName
+     *   The class name.
      * @param array $methods
+     *   The methods to mock.
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
+     *   The created mock.
      */
     protected function getMockForAbstractClassWithMethods($abstractClassName, array $methods) {
       $mock = $this->getMockForAbstractClass($abstractClassName);
@@ -173,16 +202,37 @@ namespace Drupal\Tests\select_or_other\Unit {
 
 }
 
-
 namespace {
   if (!function_exists('t')) {
+
+    /**
+     * Mock implementation of t().
+     *
+     * @param string $string
+     *   The string to translate.
+     * @param array $args
+     *   The arguments.
+     *
+     * @return string
+     *   The translated string.
+     *
+     * @see \t()
+     */
     function t($string, array $args = []) {
       return strtr($string, $args);
     }
+
   }
 
   if (!function_exists('drupal_static_reset')) {
+
+    /**
+     * Mock implementation of drupal_static_reset().
+     *
+     * @see \drupal_static_reset()
+     */
     function drupal_static_reset() {
     }
+
   }
 }

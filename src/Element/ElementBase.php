@@ -57,24 +57,28 @@ abstract class ElementBase extends FormElement {
   }
 
   /**
+   * Check whether or not the element is disabled.
+   *
    * @param array $element
    *   The element to check for enabled state.
    *
    * @return bool
    *   Whether or not the element is disabled.
    */
-  private static function elementIsDisabled($element) {
+  private static function elementIsDisabled(array $element) {
     return isset($element['#disabled']) && $element['#disabled'];
   }
 
   /**
+   * Check whether or not the element may be accessed.
+   *
    * @param array $element
    *   The element to check for access.
    *
    * @return bool
    *   Whether or not the element may be accessed.
    */
-  private static function noElementAccess($element) {
+  private static function noElementAccess(array $element) {
     return isset($element['#access']) && !$element['#access'];
   }
 
@@ -85,7 +89,7 @@ abstract class ElementBase extends FormElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    return array(
+    return [
       '#input' => TRUE,
       '#process' => [[$class, 'processSelectOrOther']],
       '#multiple' => FALSE,
@@ -94,7 +98,7 @@ abstract class ElementBase extends FormElement {
       '#theme_wrappers' => ['form_element'],
       '#options' => [],
       '#tree' => TRUE,
-    );
+    ];
   }
 
   /**

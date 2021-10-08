@@ -172,7 +172,7 @@ namespace {
   if (!function_exists('t')) {
 
     /**
-     * this is the same as StringTranslationTrait
+     * This is the same as StringTranslationTrait.
      */
     function t($string, array $args = []) {
       return strtr($string, $args);

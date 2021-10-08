@@ -2,7 +2,6 @@
 
 namespace Drupal\select_or_other\Element;
 
-
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -68,7 +67,7 @@ class Select extends ElementBase {
       // to simulate #states using our own javascript until #1149078 is
       // resolved. @see https://www.drupal.org/node/1149078
       $element['select']['#attached'] = [
-        'library' => ['select_or_other/multiple_select_states_hack']
+        'library' => ['select_or_other/multiple_select_states_hack'],
       ];
     }
   }

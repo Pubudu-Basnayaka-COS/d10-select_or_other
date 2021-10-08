@@ -53,7 +53,7 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
   /**
    * Constructs a ReferenceWidget object.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type =  NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type = NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityTypeManager = $entity_type;
     $this->bundleInfoService = $bundle_info_service;
@@ -151,24 +151,24 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
     $entity = $items->getEntity();
 
     $element = $element + [
-        '#target_type' => $this->getFieldSetting('target_type'),
-        '#selection_handler' => $this->getFieldSetting('handler'),
-        '#selection_settings' => $this->getFieldSetting('handler_settings'),
-        '#autocreate' => [
-          'bundle' => $this->getAutocreateBundle(),
-          'uid' => ($entity instanceof EntityOwnerInterface) ? $entity->getOwnerId() : \Drupal::currentUser()
-            ->id()
-        ],
-        '#validate_reference' => TRUE,
-        '#tags' => $this->getFieldSetting('target_type') === 'taxonomy_term',
-        '#merged_values' => TRUE,
-      ];
+      '#target_type' => $this->getFieldSetting('target_type'),
+      '#selection_handler' => $this->getFieldSetting('handler'),
+      '#selection_settings' => $this->getFieldSetting('handler_settings'),
+      '#autocreate' => [
+        'bundle' => $this->getAutocreateBundle(),
+        'uid' => ($entity instanceof EntityOwnerInterface) ? $entity->getOwnerId() : \Drupal::currentUser()
+          ->id(),
+      ],
+      '#validate_reference' => TRUE,
+      '#tags' => $this->getFieldSetting('target_type') === 'taxonomy_term',
+      '#merged_values' => TRUE,
+    ];
 
     $element['#element_validate'] = [
       [
         get_class($this),
-        'validateReferenceWidget'
-      ]
+        'validateReferenceWidget',
+      ],
     ];
 
     return $element;

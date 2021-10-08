@@ -84,12 +84,15 @@ class ListWidget extends WidgetBase {
     }
 
     $element = $element + [
-        '#merged_values' => TRUE,
-      ];
+      '#merged_values' => TRUE,
+    ];
 
     return $element;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     unset($values['select']);
     unset($values['other']);
