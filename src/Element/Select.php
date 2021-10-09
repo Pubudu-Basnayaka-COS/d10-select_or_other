@@ -22,6 +22,7 @@ class Select extends ElementBase {
     static::setSelectType($element);
     static::addEmptyOption($element);
     static::addStatesHandling($element);
+    static::addAjaxHandling($element);
 
     return $element;
   }
@@ -69,6 +70,18 @@ class Select extends ElementBase {
       $element['select']['#attached'] = [
         'library' => ['select_or_other/multiple_select_states_hack'],
       ];
+    }
+  }
+
+  /**
+   * Adds a #ajax array to select field to make Form API ajax callbacks work.
+   *
+   * @param array $element
+   *   The select or other element.
+   */
+  protected static function addAjaxHandling(array &$element) {
+    if (isset($element['#ajax'])) {
+      $element['select']['#ajax'] = $element['#ajax'];
     }
   }
 
