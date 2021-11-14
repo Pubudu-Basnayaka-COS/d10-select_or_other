@@ -12,12 +12,17 @@ class ListTest extends TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['options'];
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected static $modules = ['options'];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(): void {
     parent::setUp();
     $field_settings = [];
     $widget = 'select_or_other_list';

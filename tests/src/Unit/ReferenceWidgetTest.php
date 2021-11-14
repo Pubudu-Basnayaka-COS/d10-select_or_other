@@ -30,15 +30,20 @@ class ReferenceWidgetTest extends UnitTestBase {
       'getOptions',
       'getSelectedOptions',
       'getFieldSetting',
-      'getAutoCreateBundle',
     ];
+
+    if ($tested_class_name === FALSE) {
+      $methods[] = 'getAutoCreateBundle';
+    }
 
     // Get the mockBuilder.
     if ($tested_class_name) {
       $builder = $this->getMockBuilder($tested_class_name);
     }
     else {
-      $builder = $this->mockBuilder;
+      // We don't use $this->mockBuilder because it gives issues since
+      // setMethods is deprecated and onlyMethods just adds methods.
+      $builder = $this->getMockBuilder($this->getTestedClassName());
     }
 
     // Configure the mockBuilder.
@@ -48,7 +53,8 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->willReturn($this->getMockForAbstractClass('Drupal\Core\Field\FieldStorageDefinitionInterface'));
     $constructor_arguments = ['', '', $field_definition, [], []];
 
-    $builder->setConstructorArgs($constructor_arguments)->setMethods($methods);
+    $builder->setConstructorArgs($constructor_arguments)
+      ->onlyMethods($methods);
 
     if ($tested_class_name) {
       $class = new \ReflectionClass($tested_class_name);
@@ -64,8 +70,10 @@ class ReferenceWidgetTest extends UnitTestBase {
     $mock->method('getSelectedOptions')->willReturn([]);
     $mock->method('getFieldSetting')
       ->willReturnOnConsecutiveCalls($target_type, 'some_handler', [], $target_type);
-    $mock->method('getAutoCreateBundle')
-      ->willReturn('autoCreateBundle');
+    if ($tested_class_name === FALSE) {
+      $mock->method('getAutoCreateBundle')
+        ->willReturn('autoCreateBundle');
+    }
 
     return $mock;
   }
@@ -92,7 +100,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->willReturnOnConsecutiveCalls([], [$entity_mock]);
 
     $mock = $this->mockBuilder->disableOriginalConstructor()
-      ->setMethods([
+      ->onlyMethods([
         'getEntityStorage',
         'getBundleKey',
         'getSelectionHandlerSetting',
@@ -114,12 +122,12 @@ class ReferenceWidgetTest extends UnitTestBase {
     // First invocation returns an empty array because there are no entities.
     $options = $get_options->invoke($mock, $this->getMockForAbstractClass('Drupal\Core\Entity\FieldableEntityInterface'));
     $expected = [];
-    $this->assertArrayEquals($options, $expected);
+    $this->assertEquals($options, $expected);
 
     // Second invocation returns a key=>value array because there is one entity.
     $options = $get_options->invoke($mock, $this->getMockForAbstractClass('Drupal\Core\Entity\FieldableEntityInterface'));
     $expected = ["{$entity_label} ({$entity_id})" => $entity_label];
-    $this->assertArrayEquals($options, $expected);
+    $this->assertEquals($options, $expected);
   }
 
   /**
@@ -164,7 +172,7 @@ class ReferenceWidgetTest extends UnitTestBase {
         ],
       ];
 
-      $this->assertArrayEquals($expected, $added);
+      $this->assertEquals($expected, $added);
     }
   }
 
@@ -189,7 +197,7 @@ class ReferenceWidgetTest extends UnitTestBase {
         $this->assertTrue(is_string($element['#value']));
       }
       else {
-        $this->assertArrayEquals($original_element, $element);
+        $this->assertEquals($original_element, $element);
       }
     }
   }
@@ -250,7 +258,7 @@ class ReferenceWidgetTest extends UnitTestBase {
       ->willReturnOnConsecutiveCalls([], [$entity_mock]);
 
     $mock = $this->mockBuilder->disableOriginalConstructor()
-      ->setMethods(['getEntityStorage'])
+      ->onlyMethods(['getEntityStorage'])
       ->getMock();
     $mock->expects($this->exactly(2))
       ->method('getEntityStorage')
@@ -262,12 +270,12 @@ class ReferenceWidgetTest extends UnitTestBase {
     // First invocation returns an empty array because there are no entities.
     $options = $get_options->invokeArgs($mock, [[]]);
     $expected = [];
-    $this->assertArrayEquals($options, $expected);
+    $this->assertEquals($options, $expected);
 
     // Second invocation returns a value array..
     $options = $get_options->invokeArgs($mock, [[]]);
     $expected = ["{$entity_label} ({$entity_id})"];
-    $this->assertArrayEquals($options, $expected);
+    $this->assertEquals($options, $expected);
   }
 
 }

@@ -175,13 +175,13 @@ abstract class WidgetBase extends CoreWidgetBase {
   /**
    * Adds the available options to the select or other element.
    *
-   * @param array $options
+   * @param array|null $options
    *   The options to sort.
    *
    * @return array
    *   The sorted options.
    */
-  private function sortOptions(array $options) {
+  private function sortOptions($options) {
     if ($direction = $this->getSetting('sort_options')) {
       if ($direction === 'ASC') {
         uasort($options, 'strcasecmp');

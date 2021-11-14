@@ -39,7 +39,7 @@ class ListWidgetTest extends UnitTestBase {
       ->willReturn($storage_definition);
     $constructor_arguments = ['', '', $field_definition, [], []];
     $mock = $this->mockBuilder->setConstructorArgs($constructor_arguments)
-      ->setMethods([
+      ->onlyMethods([
         'getColumn',
       ])
       ->getMock();
@@ -49,7 +49,7 @@ class ListWidgetTest extends UnitTestBase {
     $get_options->setAccessible(TRUE);
 
     $options = $get_options->invoke($mock, $this->getMockForAbstractClass('Drupal\Core\Entity\FieldableEntityInterface'));
-    $this->assertArrayEquals($expected, $options);
+    $this->assertEquals($expected, $options);
   }
 
   /**
@@ -76,7 +76,7 @@ class ListWidgetTest extends UnitTestBase {
       '#other_options' => [],
     ];
 
-    $this->assertArrayEquals($expected, $added);
+    $this->assertEquals($expected, $added);
   }
 
   /**
@@ -95,7 +95,7 @@ class ListWidgetTest extends UnitTestBase {
 
     foreach ($test_values as $values) {
       $result = $sut->massageFormValues($values, $form, $form_state);
-      $this->assertArrayEquals($values, $result);
+      $this->assertEquals($values, $result);
     }
   }
 
@@ -108,7 +108,7 @@ class ListWidgetTest extends UnitTestBase {
     $form_state = new FormState();
     /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget $mock */
     $result = $sut->massageFormValues(['select' => 'test'], $form, $form_state);
-    $this->assertArrayEquals([], $result);
+    $this->assertEquals([], $result);
   }
 
   /**
@@ -120,7 +120,7 @@ class ListWidgetTest extends UnitTestBase {
     $form_state = new FormState();
     /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget $mock */
     $result = $sut->massageFormValues(['other' => 'test'], $form, $form_state);
-    $this->assertArrayEquals([], $result);
+    $this->assertEquals([], $result);
   }
 
   /**

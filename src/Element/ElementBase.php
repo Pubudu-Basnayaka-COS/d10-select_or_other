@@ -147,11 +147,9 @@ abstract class ElementBase extends FormElement {
       '#type' => 'textfield',
       '#attributes' => [
         'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-      ],
-      '#weight' => 20,
-      '#attributes' => [
         'placeholder' => t('Other: please specify here'),
       ],
+      '#weight' => 20,
     ];
 
     if (isset($element['#other_field_label']) && !empty($element['#other_field_label'])) {

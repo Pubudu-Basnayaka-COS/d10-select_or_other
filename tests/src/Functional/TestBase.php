@@ -31,8 +31,7 @@ abstract class TestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-
-  public static $modules = ['block', 'select_or_other', 'taxonomy', 'node'];
+  protected static $modules = ['block', 'select_or_other', 'taxonomy', 'node'];
 
   /**
    * {@inheritdoc}
@@ -56,15 +55,15 @@ abstract class TestBase extends BrowserTestBase {
       // an empty value.
       if ($select_type === 'select_or_other_select' && !$multiple) {
         if ($required) {
-          $this->assertText(t('- Select -'));
+          $this->assertSession()->pageTextContains(t('- Select -'));
         }
         else {
-          $this->assertText(t('- None -'));
+          $this->assertSession()->pageTextContains(t('- None -'));
         }
       }
       else {
-        $this->assertNoText(t('- Select -'));
-        $this->assertNoText(t('- None -'));
+        $this->assertSession()->pageTextNotContains(t('- Select -'));
+        $this->assertSession()->pageTextNotContains(t('- None -'));
       }
 
       // Test non-empty behaviour. Once again only single cardinality elements
@@ -76,11 +75,11 @@ abstract class TestBase extends BrowserTestBase {
         $this->setFieldValue($field_name, 'select_or_other', $other_option);
         $this->clickLink(t('Edit'));
         if (!$multiple && !$required) {
-          $this->assertText(t('- None -'));
+          $this->assertSession()->pageTextContains(t('- None -'));
         }
         else {
-          $this->assertNoText(t('- Select -'));
-          $this->assertNoText(t('- None -'));
+          $this->assertSession()->pageTextNotContains(t('- Select -'));
+          $this->assertSession()->pageTextNotContains(t('- None -'));
         }
       }
       else {
@@ -220,10 +219,10 @@ abstract class TestBase extends BrowserTestBase {
 
     if ($select !== '') {
       // Create the node.
-      $this->drupalPostForm(NULL, $edit, t('Save'));
+      $this->submitForm($edit, t('Save'));
     }
     else {
-      $this->drupalPostForm(NULL, $edit, t('Preview'));
+      $this->submitForm($edit, t('Preview'));
     }
   }
 

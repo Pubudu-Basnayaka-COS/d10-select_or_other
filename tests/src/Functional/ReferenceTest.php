@@ -12,7 +12,12 @@ class ReferenceTest extends TestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(): void {
     parent::setUp();
     $field_settings = ['target_type' => 'taxonomy_term'];
     $widget = 'select_or_other_reference';
