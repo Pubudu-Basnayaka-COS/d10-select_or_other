@@ -55,15 +55,15 @@ abstract class TestBase extends BrowserTestBase {
       // an empty value.
       if ($select_type === 'select_or_other_select' && !$multiple) {
         if ($required) {
-          $this->assertSession()->pageTextContains(t('- Select -'));
+          $this->assertSession()->pageTextContains('- Select -');
         }
         else {
-          $this->assertSession()->pageTextContains(t('- None -'));
+          $this->assertSession()->pageTextContains('- None -');
         }
       }
       else {
-        $this->assertSession()->pageTextNotContains(t('- Select -'));
-        $this->assertSession()->pageTextNotContains(t('- None -'));
+        $this->assertSession()->pageTextNotContains('- Select -');
+        $this->assertSession()->pageTextNotContains('- None -');
       }
 
       // Test non-empty behaviour. Once again only single cardinality elements
@@ -73,13 +73,13 @@ abstract class TestBase extends BrowserTestBase {
         // We set the other option, because we can set that in the same way
         // always.
         $this->setFieldValue($field_name, 'select_or_other', $other_option);
-        $this->clickLink(t('Edit'));
+        $this->clickLink('Edit');
         if (!$multiple && !$required) {
-          $this->assertSession()->pageTextContains(t('- None -'));
+          $this->assertSession()->pageTextContains('- None -');
         }
         else {
-          $this->assertSession()->pageTextNotContains(t('- Select -'));
-          $this->assertSession()->pageTextNotContains(t('- None -'));
+          $this->assertSession()->pageTextNotContains('- Select -');
+          $this->assertSession()->pageTextNotContains('- None -');
         }
       }
       else {
@@ -219,10 +219,10 @@ abstract class TestBase extends BrowserTestBase {
 
     if ($select !== '') {
       // Create the node.
-      $this->submitForm($edit, t('Save'));
+      $this->submitForm($edit, 'Save');
     }
     else {
-      $this->submitForm($edit, t('Preview'));
+      $this->submitForm($edit, 'Preview');
     }
   }
 
