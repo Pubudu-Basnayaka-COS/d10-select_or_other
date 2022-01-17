@@ -87,3 +87,9 @@ https://www.drupal.org/node/1158654
 MAINTAINERS
 -----------
 Maintainer: Chris Jansen (https://www.drupal.org/u/legolasbo)
+Maintainer: Henrique Mendes (https://www.drupal.org/u/hmendes)
+Maintainer: danielb (https://www.drupal.org/u/danielb)
+Maintainer: Jon Heaton (https://www.drupal.org/u/haydeniv)
+Maintainer: Dieter Blomme (https://www.drupal.org/u/daften)
+Maintainer: Vlad Bondarchuk (https://www.drupal.org/u/vladbo)
+Maintainer: Anton Kuzmenko (https://www.drupal.org/u/qzmenko)
