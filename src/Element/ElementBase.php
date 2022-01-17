@@ -18,6 +18,7 @@ use Drupal\Core\Render\Element\FormElement;
  *   each option, and the values are the options to be presented to the user.
  * - #empty_option: The label that will be displayed to denote no selection.
  * - #empty_value: The value of the option that is used to denote no selection.
+ * - #input_type: The element type to be used in the 'other' field.
  */
 abstract class ElementBase extends FormElement {
 
@@ -98,6 +99,7 @@ abstract class ElementBase extends FormElement {
       '#theme_wrappers' => ['form_element'],
       '#options' => [],
       '#tree' => TRUE,
+      '#input_type' => 'textfield',
     ];
   }
 
@@ -144,7 +146,7 @@ abstract class ElementBase extends FormElement {
    */
   protected static function addOtherField(array &$element) {
     $element['other'] = [
-      '#type' => 'textfield',
+      '#type' => isset($element['#input_type']) ? $element['#input_type'] : 'textfield',
       '#attributes' => [
         'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
         'placeholder' => t('Other: please specify here'),
