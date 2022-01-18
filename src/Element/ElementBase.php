@@ -149,7 +149,6 @@ abstract class ElementBase extends FormElement {
       '#type' => isset($element['#input_type']) ? $element['#input_type'] : 'textfield',
       '#attributes' => [
         'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-        'placeholder' => t('Other: please specify here'),
       ],
       '#weight' => 20,
     ];

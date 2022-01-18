@@ -63,7 +63,6 @@ class SelectElementTest extends UnitTestBase {
         '#type' => 'textfield',
         '#attributes' => [
           'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-          'placeholder' => "Other: please specify here",
         ],
         '#weight' => 20,
       ],
