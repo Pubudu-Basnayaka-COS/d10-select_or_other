@@ -27,7 +27,7 @@ abstract class ElementBase extends FormElement {
    */
   protected static function addOtherOption($options, $other_option = '') {
     if (empty($other_option)) {
-      $other_option = t('Other');
+      $other_option = t('Other [select this option to add a new value]');
     }
     $options['select_or_other'] = $other_option;
 
