@@ -73,7 +73,6 @@ class ButtonsElementTest extends UnitTestBase {
     $expected_element = array_merge_recursive($base_expected_element, [
       'select' => [
         '#type' => 'checkboxes',
-        '#value' => [],
       ],
       'other' => [
         '#states' => [
