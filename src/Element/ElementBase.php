@@ -23,7 +23,7 @@ use Drupal\Core\Render\Element\FormElement;
 abstract class ElementBase extends FormElement {
 
   /**
-   * Adds an 'other' option to the selectbox.
+   * Adds an '- Other -' option to the selectbox.
    */
   protected static function addOtherOption($options, $other_option = '') {
     if (empty($other_option)) {
