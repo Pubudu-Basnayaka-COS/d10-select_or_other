@@ -9,9 +9,9 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 
@@ -44,19 +44,36 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
   protected $bundleInfoService;
 
   /**
+   * The account interface service.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($plugin_id, $plugin_definition, $configuration['field_definition'], $configuration['settings'], $configuration['third_party_settings'], $container->get('entity_type.manager'), $container->get('entity_type.bundle.info'));
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('current_user'),
+    );
   }
 
   /**
    * Constructs a ReferenceWidget object.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type = NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type = NULL, EntityTypeBundleInfoInterface $bundle_info_service = NULL, AccountInterface $current_user = NULL) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityTypeManager = $entity_type;
     $this->bundleInfoService = $bundle_info_service;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -148,21 +165,31 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
-    $entity = $items->getEntity();
 
+    $target_entity_type_id = $this->getFieldSetting('target_type');
     $element = $element + [
-      '#target_type' => $this->getFieldSetting('target_type'),
+      '#target_type' => $target_entity_type_id,
       '#selection_handler' => $this->getFieldSetting('handler'),
       '#selection_settings' => $this->getFieldSetting('handler_settings'),
-      '#autocreate' => [
-        'bundle' => $this->getAutocreateBundle(),
-        'uid' => ($entity instanceof EntityOwnerInterface) ? $entity->getOwnerId() : \Drupal::currentUser()
-          ->id(),
-      ],
       '#validate_reference' => TRUE,
-      '#tags' => $this->getFieldSetting('target_type') === 'taxonomy_term',
+      '#tags' => $target_entity_type_id === 'taxonomy_term',
       '#merged_values' => TRUE,
     ];
+    $autocreate_bundle = $this->getAutocreateBundle();
+    $user = $this->currentUser;
+    $access = $this->getCreateAccess($target_entity_type_id, $autocreate_bundle, $user);
+    // Check whether access is allowed and if yes, fill out #autocreate.
+    if ($access->isAllowed()) {
+      $element['#autocreate'] = [
+        'bundle' => $autocreate_bundle,
+        'uid' => $user->id(),
+      ];
+    }
+    else {
+      // Otherwise do not autocreate and do not allow other.
+      $element['#autocreate'] = NULL;
+      $element['#other_allowed'] = FALSE;
+    }
 
     $element['#element_validate'] = [
       [
@@ -172,6 +199,26 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
     ];
 
     return $element;
+  }
+
+  /**
+   * Returns the access result object.
+   *
+   * @param string $entity_type_id
+   *   The entity type id.
+   * @param string $bundle
+   *   The bundle name.
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The user account interface.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface|bool
+   *   The access result. Returns a boolean if $return_as_object is FALSE (this
+   *   is the default) and otherwise an AccessResultInterface object.
+   */
+  protected function getCreateAccess($entity_type_id, $bundle, AccountInterface $user) {
+    return $this->entityTypeManager
+      ->getAccessControlHandler($entity_type_id)
+      ->createAccess($bundle, $user, [], TRUE);
   }
 
   /**

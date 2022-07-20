@@ -34,6 +34,7 @@ class ReferenceWidgetTest extends UnitTestBase {
 
     if ($tested_class_name === FALSE) {
       $methods[] = 'getAutoCreateBundle';
+      $methods[] = 'getCreateAccess';
     }
 
     // Get the mockBuilder.
@@ -51,7 +52,18 @@ class ReferenceWidgetTest extends UnitTestBase {
     $field_definition->expects($this->any())
       ->method('getFieldStorageDefinition')
       ->willReturn($this->getMockForAbstractClass('Drupal\Core\Field\FieldStorageDefinitionInterface'));
-    $constructor_arguments = ['', '', $field_definition, [], []];
+    $user = $this->getMockForAbstractClass('\Drupal\Core\Session\AccountInterface');
+    $user->method('id')->willReturn('1');
+    $constructor_arguments = [
+      '',
+      '',
+      $field_definition,
+      [],
+      [],
+      NULL,
+      NULL,
+      $user,
+    ];
 
     $builder->setConstructorArgs($constructor_arguments)
       ->onlyMethods($methods);
@@ -135,8 +147,11 @@ class ReferenceWidgetTest extends UnitTestBase {
    */
   public function testFormElement() {
     foreach (['node', 'taxonomy_term'] as $target_type) {
+      $access = $this->getMockForAbstractClass('\Drupal\Core\Access\AccessResultInterface');
+      $access->method('isAllowed')->willReturn(TRUE);
       /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\ReferenceWidget $mock */
       $mock = $this->prepareFormElementMock($target_type);
+      $mock->method('getCreateAccess')->willReturn($access);
       /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase $parent */
       $parent = $this->prepareFormElementMock($target_type, 'Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase');
 

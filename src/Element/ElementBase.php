@@ -130,12 +130,16 @@ abstract class ElementBase extends FormElement {
       '#default_value' => $element['#default_value'],
       '#required' => $element['#required'],
       '#multiple' => $element['#multiple'],
-      '#options' => static::addOtherOption($element['#original_options'] ?? $element['#options'], $element['#other_option']),
+      '#options' => $element['#original_options'] ?? $element['#options'],
       '#attributes' => [
         'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
       ],
       '#weight' => 10,
     ];
+
+    if ($element['#other_allowed'] ?? TRUE) {
+      $element['select']['#options'] = static::addOtherOption($element['select']['#options'], $element['#other_option']);
+    }
   }
 
   /**
@@ -145,13 +149,15 @@ abstract class ElementBase extends FormElement {
    *   The select or other element.
    */
   protected static function addOtherField(array &$element) {
-    $element['other'] = [
-      '#type' => isset($element['#input_type']) ? $element['#input_type'] : 'textfield',
-      '#attributes' => [
-        'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
-      ],
-      '#weight' => 20,
-    ];
+    if ($element['#other_allowed'] ?? TRUE) {
+      $element['other'] = [
+        '#type' => isset($element['#input_type']) ? $element['#input_type'] : 'textfield',
+        '#attributes' => [
+          'aria-label' => isset($element['#title']) ? $element['#title'] . ' Other' : $element['#name'] . ' Other',
+        ],
+        '#weight' => 20,
+      ];
+    }
 
     if (isset($element['#other_field_label']) && !empty($element['#other_field_label'])) {
       $element['other']['#title'] = $element['#other_field_label'];
