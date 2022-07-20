@@ -32,7 +32,7 @@ class ElementsTest extends UnitTestBase {
     $method->setAccessible(TRUE);
     $options = $method->invoke(NULL, $options);
 
-    $this->assertEquals(['select_or_other' => '-Other-'], $options);
+    $this->assertEquals(['select_or_other' => '- Other -'], $options);
   }
 
   /**
