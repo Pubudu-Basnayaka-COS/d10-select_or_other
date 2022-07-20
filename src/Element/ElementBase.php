@@ -4,7 +4,6 @@ namespace Drupal\select_or_other\Element;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Base class for select or other form elements.
@@ -28,7 +27,7 @@ abstract class ElementBase extends FormElement {
    */
   protected static function addOtherOption($options, $other_option = '') {
     if (empty($other_option)) {
-      $other_option = new TranslatableMarkup('-Other-');
+      $other_option = t('-Other-');
     }
     $options['select_or_other'] = $other_option;
 
