@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\select_or_other\Unit;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget;
 
 /**
@@ -14,6 +14,37 @@ use Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget;
  * @covers Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget
  */
 class ListWidgetTest extends UnitTestBase {
+
+  /**
+   * {@inheritDoc}
+   */
+  public function setUp() :void {
+    parent::setUp();
+    $this->currentUser = $this->getMockBuilder('Drupal\Core\Session\AccountInterface')->disableOriginalConstructor()->getMock();
+    $this->entityTypeManager = $this->getMockBuilder('Drupal\Core\Entity\EntityTypeManagerInterface')->getMock();
+    $this->entityStorage = $this->getMockBuilder('Drupal\Core\Entity\EntityStorageInterface')->getMock();
+    $this->field_storage_config = $this->getMockForAbstractClass('Drupal\field\FieldStorageConfigInterface');
+
+  }
+
+  /**
+   * Method to set the return value of each mock.
+   *
+   * @param array $allowed_values
+   *   Values of the allowed_values settings.
+   */
+  private function setMock(array $allowed_values = []) :void {
+    $this->field_storage_config
+      ->method('setSetting')
+      ->with('allowed_values', $allowed_values)
+      ->willReturnSelf();
+    $this->entityStorage
+      ->method('load')
+      ->will(self::returnValue($this->field_storage_config));
+    $this->entityTypeManager
+      ->method('getStorage')
+      ->will(self::returnValue($this->entityStorage));
+  }
 
   /**
    * {@inheritdoc}
@@ -37,7 +68,15 @@ class ListWidgetTest extends UnitTestBase {
     $field_definition = $this->getMockForAbstractClass('Drupal\Core\Field\FieldDefinitionInterface');
     $field_definition->method('getFieldStorageDefinition')
       ->willReturn($storage_definition);
-    $constructor_arguments = ['', '', $field_definition, [], []];
+    $constructor_arguments = [
+      '',
+      '',
+      $field_definition,
+      [],
+      [],
+      $this->currentUser,
+      $this->entityTypeManager,
+    ];
     $mock = $this->mockBuilder->setConstructorArgs($constructor_arguments)
       ->onlyMethods([
         'getColumn',
@@ -56,7 +95,7 @@ class ListWidgetTest extends UnitTestBase {
    * Test if formElement() adds the expected information.
    */
   public function testFormElement() {
-    list($parent, $mock) = $this->getBasicMocks();
+    [$parent, $mock] = $this->getBasicMocks();
     /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\ListWidget $mock */
     /** @var \Drupal\select_or_other\Plugin\Field\FieldWidget\WidgetBase $parent */
     /** @var \Drupal\Core\Field\FieldItemListInterface $items */
@@ -135,16 +174,7 @@ class ListWidgetTest extends UnitTestBase {
     $field_definition = $this->getMockForAbstractClass('\Drupal\Core\Field\FieldDefinitionInterface');
     $field_definition->method('getSetting')->willReturn($allowed_values);
     $sut = $this->getNewSubjectUnderTest($field_definition);
-
-    $field_storage_config = $this->getMockForAbstractClass('\Drupal\field\FieldStorageConfigInterface');
-    $field_storage_config->expects($this->once())->method('setSetting')->willReturnSelf();
-    $field_storage_config->expects($this->once())->method('save');
-
-    $entity_storage_methods = ['load' => $field_storage_config];
-
-    $entity_type_manager_methods = ['getStorage' => $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityStorageInterface', $entity_storage_methods)];
-    $entity_type_manager_mock = $this->getMockForAbstractClassWithMethods('\Drupal\Core\Entity\EntityTypeManagerInterface', $entity_type_manager_methods);
-    $this->registerServiceWithContainerMock('entity_type.manager', $entity_type_manager_mock);
+    $this->setMock(['est' => 'est'], TRUE);
 
     $form = [];
     $form_state = new FormState();
@@ -206,7 +236,7 @@ class ListWidgetTest extends UnitTestBase {
     }
     $settings = [];
     $third_party_settings = [];
-    return new ListWidget($widget_id, $plugin_definition, $fieldDefinition, $settings, $third_party_settings);
+    return new ListWidget($widget_id, $plugin_definition, $fieldDefinition, $settings, $third_party_settings, $this->currentUser, $this->entityTypeManager);
   }
 
 }

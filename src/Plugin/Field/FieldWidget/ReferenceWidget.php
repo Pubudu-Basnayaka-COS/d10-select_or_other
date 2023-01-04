@@ -239,7 +239,7 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
    */
   protected function getSelectionHandlerSetting($setting_name) {
     $settings = $this->getFieldSetting('handler_settings');
-    return isset($settings[$setting_name]) ? $settings[$setting_name] : NULL;
+    return $settings[$setting_name] ?? NULL;
   }
 
   /**
@@ -294,7 +294,7 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     $options = $field_definition->getSettings();
-    $handler_settings = isset($options['handler_settings']) ? $options['handler_settings'] : NULL;
+    $handler_settings = $options['handler_settings'] ?? NULL;
     $handler = \Drupal::service('plugin.manager.entity_reference_selection')
       ->getInstance($options);
     return $handler instanceof SelectionWithAutocreateInterface

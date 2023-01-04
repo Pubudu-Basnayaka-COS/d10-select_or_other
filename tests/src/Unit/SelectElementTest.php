@@ -55,7 +55,7 @@ class SelectElementTest extends UnitTestBase {
         '#multiple' => $element['#multiple'],
         '#options' => $method->invoke(NULL, $element['#options'], $element['#other_option']),
         '#attributes' => [
-          'aria-label' => isset($element['#title']) ? $element['#title'] : $element['#name'],
+          'aria-label' => $element['#title'] ?? $element['#name'],
         ],
         '#weight' => 10,
       ],
