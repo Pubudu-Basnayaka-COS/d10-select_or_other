@@ -39,23 +39,38 @@ APPLICATIONS
    form or module.
 
 
-USAGE EXAMPLE
+USAGE EXAMPLES
 -------------
-Field widget
-============
-This is an example to use the Field widget. First make sure you have a Taxonomy
-vocabulary.
 
-1. Go to Structure and add a new Content type.
+Reference widget: Uses a taxonomy vocabulary to populate the options list. When new terms are added via the "other" choice, they are added to the options list.
 
-2. Add a field with field type Taxonomy term.
+List widget: Similar to Drupal 7, adds an "other" option to a select list, such as "List (text)." Whether new terms are added via the "other" choice is configurable.
 
-3. Edit this field and select "Create referenced entities if they don't already
-   exist" and save.
+Reference widget
+-------------
+
+First, create a taxonomy vocabulary to contain the options (terms) that will populate the select list. Then:
+
+1. Open your content type or other entity type and go to the manage fields tab, or create a new entity type.
+
+2. Add a field with field type reference/taxonomy term.
+
+3. Edit that field and select "Create referenced entities if they don't already exist," then save. 
 
 4. Go to Manage form display and select "Select or Other" in the Widget column.
 
-You can find the "Other" option by adding new content.
+When adding new content, selecting the 'other" option will open a text box where a new term/option can be entered. New terms will be added to the options/terms list when a user chooses the "other" option and submits the entity.
+
+List widget
+-------------
+
+1. Open your content type or other entity type and go to the manage fields tab, or create a new entity type.
+
+2. Add a field with a list field type, such as "List (text)" or "List (integer)." Enter the allowed values for that field (but not "other").
+
+3. On the "manage form display" tab, choose "select or other." In the settings (gear icon) for that field, toggle the checkbox "Add entered values from the other field to the allowed values list" to configure whether options added via "other" will be added to the default options list.
+
+When adding new content, selecting the 'other" option will open a text box where a new term/option can be entered. New terms will be added to the list if "Add entered values from the other field to the allowed values list" is checked.
 
 
 Forms API element
