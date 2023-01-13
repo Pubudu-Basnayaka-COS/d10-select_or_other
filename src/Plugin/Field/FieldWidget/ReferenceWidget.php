@@ -132,15 +132,28 @@ class ReferenceWidget extends WidgetBase implements ContainerFactoryPluginInterf
 
     // Prepare properties to use for loading.
     $entity_storage = $this->getEntityStorage();
-    $bundle_key = $this->getBundleKey();
-    $target_bundles = $this->getSelectionHandlerSetting('target_bundles');
-    $properties = [$bundle_key => $target_bundles];
+    if (is_a($entity_storage, '\Drupal\taxonomy\TermStorage')) {
+      $target_bundles = $this->getSelectionHandlerSetting('target_bundles');
 
-    $entities = $entity_storage->loadByProperties($properties);
+      $entities = [];
+      foreach ($target_bundles as $target) {
+        $entities = array_merge($entities, $entity_storage->loadTree($target));
+      }
 
-    // Prepare the options.
-    foreach ($entities as $entity) {
-      $options["{$entity->label()} ({$entity->id()})"] = $entity->label();
+      foreach ($entities as $entity) {
+        $options["{$entity->name} ({$entity->tid})"] = str_repeat("-", $entity->depth) . $entity->name;
+      }
+    }
+    else {
+      $bundle_key = $this->getBundleKey();
+      $target_bundles = $this->getSelectionHandlerSetting('target_bundles');
+      $properties = [$bundle_key => $target_bundles];
+      $entities = $entity_storage->loadByProperties($properties);
+
+      // Prepare the options.
+      foreach ($entities as $entity) {
+        $options["{$entity->label()} ({$entity->id()})"] = $entity->label();
+      }
     }
 
     return $options;
